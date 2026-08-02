@@ -1,36 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-:root {
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
-  --border: 240 5.9% 90%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
-  --accent: 240 4.8% 95.9%;
-  --accent-foreground: 240 5.9% 10%;
-  --primary: 221.2 83.2% 53.3%;
-  --primary-foreground: 210 40% 98%;
-  --radius: 0.5rem;
-}
-
+/*
+ * Admin console theme — dark only. The console is an internal operator tool and
+ * ships a single (dark) surface, so there is no light-mode block: `html` is
+ * hard-coded to `.dark` in the root layout.
+ *
+ * The legacy shadcn-style `--card` / `--muted` / `--primary` vars are kept and
+ * remapped onto the new palette so components that were written against them
+ * keep rendering correctly.
+ */
+:root,
 .dark {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  --card: 240 10% 7%;
-  --card-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --accent: 240 3.7% 15.9%;
-  --accent-foreground: 0 0% 98%;
-  --primary: 217.2 91.2% 59.8%;
-  --primary-foreground: 222.2 47.4% 11.2%;
+  /* Planes */
+  --ink: 250 24% 4%;          /* page background */
+  --panel: 250 26% 6%;        /* sidebar / topbar */
+  --surface: 250 22% 8%;      /* cards, tables */
+  --surface-2: 250 20% 11%;   /* row hover, inset controls */
+  --line: 250 16% 16%;        /* hairline borders */
+  --line-strong: 250 16% 24%;
+
+  /* Ink */
+  --fg: 250 20% 93%;
+  --muted-fg: 250 12% 62%;
+  --dim-fg: 250 12% 42%;
+
+  /* Accents */
+  --accent: 258 90% 76%;      /* lavender — brand */
+  --accent-soft: 255 92% 85%;
+  --mint: 168 76% 64%;
+  --cyan: 189 94% 68%;
+  --success: 142 69% 58%;
+  --warn: 38 92% 60%;
+  --danger: 351 95% 71%;
+
+  --radius: 0.75rem;
+
+  /* Legacy aliases */
+  --background: var(--ink);
+  --foreground: var(--fg);
+  --card: var(--surface);
+  --card-foreground: var(--fg);
+  --border: var(--line);
+  --muted: var(--surface-2);
+  --muted-foreground: var(--muted-fg);
+  --accent-foreground: var(--fg);
+  --primary: var(--accent);
+  --primary-foreground: 250 30% 8%;
 }
 
 * {
@@ -38,7 +57,40 @@
 }
 
 body {
-  background: hsl(var(--background));
-  color: hsl(var(--foreground));
+  background: hsl(var(--ink));
+  color: hsl(var(--fg));
   font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Numbers in tables and stat tiles must align vertically. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Thin, unobtrusive scrollbars so dense tables don't grow chrome. */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--line-strong));
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--dim-fg));
+  background-clip: content-box;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.animate-pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
 }

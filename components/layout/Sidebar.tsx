@@ -2,68 +2,85 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, MessageSquare, Bell, Settings } from 'lucide-react'
-import { useExtensionSync } from '../../hooks/useExtensionSync'
-import { format } from 'date-fns'
+import {
+  LayoutGrid,
+  Users,
+  Activity,
+  FileCheck2,
+  CreditCard,
+  BarChart3,
+  Settings,
+  LifeBuoy,
+  SquareTerminal,
+} from 'lucide-react'
+import { cn } from '../../lib/utils'
 
-const navItems = [
-  { href: '/', label: 'Overview', icon: LayoutDashboard },
-  { href: '/history', label: 'Comment History', icon: MessageSquare },
-  { href: '/replies', label: 'Replies Received', icon: Bell },
-  { href: '/settings', label: 'Settings', icon: Settings },
-]
+export const NAV_ITEMS = [
+  { href: '/', label: 'Dashboard', icon: LayoutGrid },
+  { href: '/users', label: 'Users', icon: Users },
+  { href: '/monitoring', label: 'Monitoring', icon: Activity },
+  { href: '/moderation', label: 'RAG Moderation', icon: FileCheck2 },
+  { href: '/billing', label: 'Billing', icon: CreditCard },
+  { href: '/analytics', label: 'Analytics', icon: BarChart3 },
+  { href: '/config', label: 'Config', icon: Settings },
+  { href: '/support', label: 'Support', icon: LifeBuoy },
+  { href: '/logs', label: 'Logs', icon: SquareTerminal },
+] as const
+
+export const SIDEBAR_WIDTH = 272
 
 export function Sidebar() {
   const pathname = usePathname()
-  const { syncNow, lastSynced, isSyncing } = useExtensionSync()
 
   return (
     <aside
-      className="fixed top-0 left-0 h-full flex flex-col bg-[hsl(240_10%_5%)] border-r border-[hsl(var(--border))]"
-      style={{ width: 240 }}
+      className="fixed inset-y-0 left-0 z-30 flex flex-col border-r border-line bg-panel"
+      style={{ width: SIDEBAR_WIDTH }}
     >
-      {/* Logo */}
-      <div className="px-5 py-5 border-b border-[hsl(var(--border))]">
-        <p className="text-sm font-bold text-white tracking-tight">LCA Dashboard</p>
-        <p className="text-xs text-[hsl(var(--muted-foreground))] mt-0.5">LinkedIn AI Comments</p>
+      {/* Wordmark */}
+      <div className="px-6 pb-7 pt-7">
+        <p className="bg-gradient-to-r from-accent-soft to-accent bg-clip-text text-[28px] font-extrabold leading-none tracking-tight text-transparent">
+          LinkedIn AI
+        </p>
+        <p className="mt-2 font-mono text-xs text-muted-foreground">Admin Console</p>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {navItems.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href
+      <nav className="flex-1 overflow-y-auto px-3 py-2">
+        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+          const active = href === '/' ? pathname === '/' : pathname.startsWith(href)
           return (
             <Link
               key={href}
               href={href}
-              className={[
-                'flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors duration-150',
+              aria-current={active ? 'page' : undefined}
+              className={cn(
+                'relative mb-1 flex items-center gap-3 rounded-md px-3 py-2.5 font-mono text-sm transition-colors duration-150',
                 active
-                  ? 'text-white border-l-2 border-[hsl(var(--primary))] bg-[hsl(240_10%_10%)] pl-[10px]'
-                  : 'text-[hsl(var(--muted-foreground))] hover:text-white hover:bg-[hsl(240_10%_8%)]',
-              ].join(' ')}
+                  ? 'bg-accent/[0.09] text-accent-soft'
+                  : 'text-muted-foreground hover:bg-surface-2 hover:text-fg'
+              )}
             >
-              <Icon size={16} />
+              {/* Active rail sits on the sidebar edge, matching the design. */}
+              {active && (
+                <span className="absolute -right-3 inset-y-0 w-[3px] rounded-l-full bg-accent" />
+              )}
+              <Icon size={18} strokeWidth={1.75} className="shrink-0" />
               <span>{label}</span>
             </Link>
           )
         })}
       </nav>
 
-      {/* Sync footer */}
-      <div className="px-4 py-4 border-t border-[hsl(var(--border))]">
-        <button
-          onClick={syncNow}
-          disabled={isSyncing}
-          className="w-full text-xs py-2 px-3 bg-[hsl(240_10%_10%)] hover:bg-[hsl(240_10%_14%)] text-[hsl(var(--muted-foreground))] hover:text-white border border-[hsl(var(--border))] rounded-md transition-colors duration-150 disabled:opacity-50"
-        >
-          {isSyncing ? 'Syncing…' : 'Sync from Extension'}
-        </button>
-        {lastSynced && (
-          <p className="text-xs text-[hsl(var(--muted-foreground))] text-center mt-2">
-            Last synced {format(lastSynced, 'HH:mm')}
-          </p>
-        )}
+      {/* Operator */}
+      <div className="flex items-center gap-3 border-t border-line px-5 py-4">
+        <div className="grid size-9 shrink-0 place-items-center rounded-full bg-accent/15 font-mono text-xs font-semibold text-accent-soft">
+          AD
+        </div>
+        <div className="min-w-0">
+          <p className="truncate font-mono text-xs text-fg">Admin Avatar</p>
+          <p className="truncate font-mono text-2xs text-dim">Primary Admin</p>
+        </div>
       </div>
     </aside>
   )

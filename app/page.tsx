@@ -1,120 +1,183 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useCommentStore } from '../store/useCommentStore'
-import { Header } from '../components/layout/Header'
-import { CategoryBadge } from '../components/history/CategoryBadge'
-import { formatDistanceToNow } from 'date-fns'
-import { MessageSquare, TrendingUp, Tag, Bell } from 'lucide-react'
+import Link from 'next/link'
+import { useAdminResource } from '../hooks/useAdminResource'
+import { ResourceState } from '../components/ui/ResourceState'
+import { StatusStrip } from '../components/dashboard/StatusStrip'
+import { AlertList } from '../components/dashboard/AlertList'
+import {
+  Badge,
+  EmptyState,
+  Panel,
+  PanelHeader,
+  StatTile,
+  StatusDot,
+  Td,
+  Th,
+  TableShell,
+} from '../components/ui/primitives'
+import { fmtAgo, fmtCount, fmtPercent, initials } from '../lib/format'
+import type { OverviewResponse } from '../types'
 
-function StatsCard({
-  label,
-  value,
-  icon: Icon,
-}: {
-  label: string
-  value: string | number
-  icon: any
-}) {
+export default function DashboardPage() {
+  const { data, status, error, notConfigured, reload } =
+    useAdminResource<OverviewResponse>('/api/overview')
+
   return (
-    <div className="bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-lg p-5">
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-xs font-medium text-[hsl(var(--muted-foreground))] uppercase tracking-wide">
-          {label}
-        </p>
-        <Icon size={16} className="text-[hsl(var(--muted-foreground))]" />
-      </div>
-      <p className="text-2xl font-bold text-[hsl(var(--foreground))]">{value}</p>
-    </div>
+    <ResourceState status={status} error={error} notConfigured={notConfigured} onRetry={reload}>
+      {data && <Overview data={data} />}
+    </ResourceState>
   )
 }
 
-function thisWeekCount(comments: any[]) {
-  const cutoff = new Date()
-  cutoff.setDate(cutoff.getDate() - 7)
-  return comments.filter((c) => new Date(c.timestamp) >= cutoff).length
-}
-
-function mostUsedCategory(comments: any[]): string {
-  if (!comments.length) return '—'
-  const counts: Record<string, number> = {}
-  for (const c of comments) counts[c.category] = (counts[c.category] ?? 0) + 1
-  return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0]
-}
-
-export default function OverviewPage() {
-  const { comments, replies, loadComments, loadReplies } = useCommentStore()
-  const [extensionDetected, setExtensionDetected] = useState<boolean | null>(null)
-
-  useEffect(() => {
-    loadComments()
-    loadReplies()
-
-    const timer = setTimeout(() => {
-      if (extensionDetected === null) setExtensionDetected(false)
-    }, 1500)
-
-    window.addEventListener('message', (e) => {
-      if (e.data?.type === 'SYNC_RECEIVED') {
-        setExtensionDetected(true)
-        clearTimeout(timer)
-      }
-    })
-
-    window.postMessage({ type: 'REQUEST_SYNC' }, '*')
-
-    return () => clearTimeout(timer)
-  }, [])
-
-  const recent = comments.slice(0, 5)
+function Overview({ data }: { data: OverviewResponse }) {
+  const criticalCount = data.alerts.filter((a) => a.severity === 'critical').length
+  const engageRate =
+    data.activeUsers30d > 0 ? data.activeUsers7d / data.activeUsers30d : null
 
   return (
     <div>
-      <Header title="Overview" description="Your LinkedIn AI comment activity at a glance." />
+      <StatusStrip services={data.services} />
 
-      {extensionDetected === false && (
-        <div className="mb-6 px-4 py-3 bg-amber-900/30 border border-amber-700/50 rounded-lg text-sm text-amber-300">
-          Extension not detected. Install the Chrome extension to sync comments.
-        </div>
-      )}
-
-      {/* Stats */}
-      <div className="grid grid-cols-4 gap-4 mb-8">
-        <StatsCard label="Total Comments" value={comments.length} icon={MessageSquare} />
-        <StatsCard label="This Week" value={thisWeekCount(comments)} icon={TrendingUp} />
-        <StatsCard label="Top Category" value={mostUsedCategory(comments)} icon={Tag} />
-        <StatsCard label="Replies Received" value={replies.length} icon={Bell} />
+      {/* Headline metrics */}
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <StatTile
+          label="Total Users"
+          value={fmtCount(data.totalUsers)}
+          chip={data.newUsers7d > 0 ? `+${data.newUsers7d}` : '0'}
+          chipTone={data.newUsers7d > 0 ? 'success' : 'neutral'}
+          progress={data.totalUsers > 0 ? data.activeUsers30d / data.totalUsers : 0}
+          caption={`${data.activeUsers30d} active in 30d`}
+        />
+        <StatTile
+          label="Active Users"
+          value={fmtCount(data.activeUsers7d)}
+          chip="7D / 30D"
+          caption={
+            <>
+              <span className="text-cyan">Engage rate {fmtPercent(engageRate)}</span> ·{' '}
+              {data.activeUsers30d} / 30d
+            </>
+          }
+        />
+        <StatTile
+          label="Generations"
+          value={fmtCount(data.generationsToday)}
+          chip="TODAY"
+          chipTone="accent"
+          caption={`${fmtCount(data.generationsTotal)} all time`}
+        />
+        <StatTile
+          label="Used Rate"
+          value={fmtPercent(data.usedRate)}
+          tone="mint"
+          chip="30D"
+          chipTone="mint"
+          highlight
+          caption="Comments used or edited into a post"
+        />
+        <StatTile
+          label="Like Rate"
+          value={fmtPercent(data.likeRate)}
+          tone={data.likeRate != null && data.likeRate < 0.5 ? 'danger' : 'neutral'}
+          chip="30D"
+          caption="Of generations that received feedback"
+        />
       </div>
 
-      {/* Recent activity */}
-      <div className="bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-lg overflow-hidden">
-        <div className="px-5 py-4 border-b border-[hsl(var(--border))]">
-          <p className="text-sm font-semibold">Recent Activity</p>
-        </div>
-        {recent.length === 0 ? (
-          <div className="px-5 py-10 text-center text-sm text-[hsl(var(--muted-foreground))]">
-            No comments yet. Use the extension on LinkedIn.
-          </div>
-        ) : (
-          <div className="divide-y divide-[hsl(var(--border))]">
-            {recent.map((c) => (
-              <div key={c.id} className="px-5 py-3 flex items-start gap-3">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{c.authorName}</p>
-                  <p className="text-xs text-[hsl(var(--muted-foreground))] truncate mt-0.5">
-                    {c.selectedComment ?? c.comment1}
-                  </p>
-                </div>
-                <div className="flex items-center gap-3 flex-shrink-0">
-                  <CategoryBadge category={c.category} />
-                  <span className="text-xs text-[hsl(var(--muted-foreground))]">
-                    {formatDistanceToNow(new Date(c.timestamp), { addSuffix: true })}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+        {/* Recent signups */}
+        <section>
+          <PanelHeader
+            title="Recent Signups"
+            action={
+              <Link
+                href="/users"
+                className="font-mono text-xs text-accent-soft transition-opacity hover:opacity-75"
+              >
+                View All Users
+              </Link>
+            }
+            className="px-0 pt-0"
+          />
+          <Panel className="overflow-hidden">
+            {data.recentSignups.length === 0 ? (
+              <EmptyState title="No users have signed up yet." />
+            ) : (
+              <TableShell>
+                <thead>
+                  <tr className="border-b border-line">
+                    <Th>User</Th>
+                    <Th>Activity</Th>
+                    <Th>Signed Up</Th>
+                    <Th className="text-right">Status</Th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.recentSignups.map((u) => (
+                    <tr key={u.id} className="border-b border-line last:border-0">
+                      <Td>
+                        <div className="flex items-center gap-3">
+                          <span className="grid size-9 shrink-0 place-items-center rounded-md bg-accent/12 font-mono text-2xs font-semibold text-accent-soft">
+                            {initials(u.name, u.email)}
+                          </span>
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-medium text-fg">
+                              {u.name ?? u.email?.split('@')[0] ?? 'Unknown'}
+                            </p>
+                            <p className="truncate font-mono text-2xs text-dim">
+                              {u.email ?? '—'}
+                            </p>
+                          </div>
+                        </div>
+                      </Td>
+                      <Td>
+                        <Badge tone={u.generations > 0 ? 'accent' : 'neutral'}>
+                          {u.generations} gen
+                        </Badge>
+                      </Td>
+                      <Td className="font-mono text-xs text-muted-foreground">
+                        {fmtAgo(u.createdAt)}
+                      </Td>
+                      <Td className="text-right">
+                        <span className="inline-flex items-center gap-2 font-mono text-xs">
+                          <StatusDot tone={u.confirmed ? 'success' : 'warn'} />
+                          <span className={u.confirmed ? 'text-success' : 'text-warn'}>
+                            {u.confirmed ? 'Confirmed' : 'Pending'}
+                          </span>
+                        </span>
+                      </Td>
+                    </tr>
+                  ))}
+                </tbody>
+              </TableShell>
+            )}
+          </Panel>
+        </section>
+
+        {/* System alerts */}
+        <section>
+          <PanelHeader
+            title="System Alerts"
+            action={
+              <span className="inline-flex items-center gap-2 font-mono text-xs">
+                <StatusDot tone={criticalCount ? 'danger' : 'success'} />
+                <span className={criticalCount ? 'text-danger' : 'text-muted-foreground'}>
+                  {criticalCount} Critical
+                </span>
+              </span>
+            }
+            className="px-0 pt-0"
+          />
+          <AlertList alerts={data.alerts} />
+
+          {data.windowTruncated && (
+            <p className="mt-4 font-mono text-2xs text-dim">
+              Note: the 30-day window hit the row cap — rates are computed over the most recent
+              3,000 generations.
+            </p>
+          )}
+        </section>
       </div>
     </div>
   )

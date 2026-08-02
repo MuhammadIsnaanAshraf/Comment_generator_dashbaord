@@ -1,20 +1,22 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { Sidebar } from '../components/layout/Sidebar'
+import { Sidebar, SIDEBAR_WIDTH } from '../components/layout/Sidebar'
+import { Topbar } from '../components/layout/Topbar'
 
 export const metadata: Metadata = {
-  title: 'LCA Dashboard — LinkedIn AI Comment Assistant',
-  description: 'Track and manage your AI-generated LinkedIn comments',
+  title: 'AI Admin — LinkedIn AI Comment Assistant',
+  description: 'Operator console for users, generations, and system health',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className="min-h-screen bg-[hsl(var(--background))]">
+      <body className="min-h-screen bg-ink">
         <Sidebar />
+        <Topbar />
         <main
           className="min-h-screen"
-          style={{ marginLeft: 240, padding: '32px 40px' }}
+          style={{ marginLeft: SIDEBAR_WIDTH, padding: '106px 32px 48px' }}
         >
           {children}
         </main>
