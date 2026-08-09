@@ -1,13 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { useAdminResource } from '../../hooks/useAdminResource'
-import { ResourceState } from '../../components/ui/ResourceState'
-import { Header } from '../../components/layout/Header'
-import { GhostButton, Panel, PanelHeader, StatTile } from '../../components/ui/primitives'
-import { CategoryBars, DailyBars, StackedSplit } from '../../components/charts/Charts'
-import { fmtCount, fmtPercent } from '../../lib/format'
-import type { AnalyticsResponse } from '../../types'
+import { useAdminResource } from '../../../hooks/useAdminResource'
+import { ResourceState } from '../../../components/ui/ResourceState'
+import { Header } from '../../../components/layout/Header'
+import { GhostButton, Panel, PanelHeader, StatTile } from '../../../components/ui/primitives'
+import { CategoryBars, DailyBars, StackedSplit } from '../../../components/charts/Charts'
+import { fmtCount, fmtPercent } from '../../../lib/format'
+import type { AnalyticsResponse } from '../../../types'
 
 const RANGES = [7, 30, 90] as const
 

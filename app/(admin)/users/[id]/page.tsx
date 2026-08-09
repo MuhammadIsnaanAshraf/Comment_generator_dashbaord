@@ -2,9 +2,9 @@
 
 import Link from 'next/link'
 import { ChevronRight, Info, Sparkles } from 'lucide-react'
-import { useAdminResource } from '../../../hooks/useAdminResource'
-import { ResourceState } from '../../../components/ui/ResourceState'
-import { DailyBars } from '../../../components/charts/Charts'
+import { useAdminResource } from '../../../../hooks/useAdminResource'
+import { ResourceState } from '../../../../components/ui/ResourceState'
+import { DailyBars } from '../../../../components/charts/Charts'
 import {
   Badge,
   Meter,
@@ -15,8 +15,8 @@ import {
   Th,
   TableShell,
   type Tone,
-} from '../../../components/ui/primitives'
-import { fmtAgo, fmtDate, fmtDateTime, fmtPercent, initials, truncate } from '../../../lib/format'
+} from '../../../../components/ui/primitives'
+import { fmtAgo, fmtDate, fmtDateTime, fmtPercent, initials, truncate } from '../../../../lib/format'
 
 interface UserDetail {
   user: {

@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useCommentStore } from '../../store/useCommentStore'
-import { Header } from '../../components/layout/Header'
-import { Panel } from '../../components/ui/primitives'
-import { ReplyFeed } from '../../components/replies/ReplyFeed'
-import { ExtensionSyncButton } from '../../components/layout/ExtensionSyncButton'
+import { useCommentStore } from '../../../store/useCommentStore'
+import { Header } from '../../../components/layout/Header'
+import { Panel } from '../../../components/ui/primitives'
+import { ReplyFeed } from '../../../components/replies/ReplyFeed'
+import { ExtensionSyncButton } from '../../../components/layout/ExtensionSyncButton'
 
 /**
  * Replies received on extension-generated comments. Like /history this reads

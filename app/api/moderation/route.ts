@@ -7,6 +7,7 @@ import {
   listUserProfiles,
 } from '../../../lib/admin-data'
 import { errorResponse } from '../../../lib/api-response'
+import { requireAdmin } from '../../../lib/require-admin'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -21,6 +22,9 @@ const FLAG_LIMIT = 50
  * visibly leaked into the output (`bmc_used`) or drew negative feedback.
  */
 export async function GET() {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
   try {
     const [profiles, users, rows] = await Promise.all([
       listUserProfiles(),

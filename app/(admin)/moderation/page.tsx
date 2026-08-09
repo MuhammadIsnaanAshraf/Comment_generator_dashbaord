@@ -3,10 +3,10 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { FolderOpen, LayoutGrid, ListFilter, Rows3, ScanSearch, RefreshCw } from 'lucide-react'
-import { useAdminResource } from '../../hooks/useAdminResource'
-import { ResourceState } from '../../components/ui/ResourceState'
-import { Header } from '../../components/layout/Header'
-import { CategoryBars } from '../../components/charts/Charts'
+import { useAdminResource } from '../../../hooks/useAdminResource'
+import { ResourceState } from '../../../components/ui/ResourceState'
+import { Header } from '../../../components/layout/Header'
+import { CategoryBars } from '../../../components/charts/Charts'
 import {
   Badge,
   EmptyState,
@@ -17,8 +17,8 @@ import {
   Th,
   TableShell,
   type Tone,
-} from '../../components/ui/primitives'
-import { fmtDateTime, fmtPercent, truncate } from '../../lib/format'
+} from '../../../components/ui/primitives'
+import { fmtDateTime, fmtPercent, truncate } from '../../../lib/format'
 
 interface QueueEntry {
   id: string

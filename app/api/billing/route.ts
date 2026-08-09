@@ -8,6 +8,7 @@ import {
 } from '../../../lib/admin-data'
 import { getSupabaseAdmin } from '../../../lib/supabase-admin'
 import { errorResponse } from '../../../lib/api-response'
+import { requireAdmin } from '../../../lib/require-admin'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -15,6 +16,9 @@ export const dynamic = 'force-dynamic'
 const TREND_MONTHS = 6
 
 export async function GET() {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
   try {
     const [plans, subscriptions, invoices, users] = await Promise.all([
       listBillingPlans(),
@@ -105,6 +109,9 @@ export async function GET() {
 
 /** Updates the plan catalogue the Plan Configuration table edits. */
 export async function PUT(request: NextRequest) {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
   try {
     const body = await request.json()
     const updates: unknown = body?.plans

@@ -1,8 +1,8 @@
 'use client'
 
-import { useAdminResource } from '../../hooks/useAdminResource'
-import { ResourceState } from '../../components/ui/ResourceState'
-import { Header } from '../../components/layout/Header'
+import { useAdminResource } from '../../../hooks/useAdminResource'
+import { ResourceState } from '../../../components/ui/ResourceState'
+import { Header } from '../../../components/layout/Header'
 import {
   Badge,
   Panel,
@@ -11,7 +11,7 @@ import {
   Td,
   Th,
   TableShell,
-} from '../../components/ui/primitives'
+} from '../../../components/ui/primitives'
 
 interface EnvEntry {
   key: string

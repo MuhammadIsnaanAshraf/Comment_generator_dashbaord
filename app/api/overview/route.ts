@@ -14,6 +14,7 @@ import {
 import { errorResponse } from '../../../lib/api-response'
 import { isSupabaseAdminConfigured } from '../../../lib/supabase-admin'
 import type { OverviewResponse, ServiceStatus, SystemAlert } from '../../../types'
+import { requireAdmin } from '../../../lib/require-admin'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -25,6 +26,9 @@ const LOW_USED_RATE = 0.25
 const BMC_OVERUSE_RATE = 0.5
 
 export async function GET() {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
   try {
     const sinceIso = daysAgoIso(WINDOW_DAYS)
     const todayIso = startOfTodayIso()

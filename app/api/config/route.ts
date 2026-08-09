@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { isSupabaseAdminConfigured } from '../../../lib/supabase-admin'
+import { requireAdmin } from '../../../lib/require-admin'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -9,6 +10,9 @@ export const dynamic = 'force-dynamic'
  * a secret is *present* and, for URLs, its value — never the secret itself.
  */
 export async function GET() {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
   const supabaseUrl = process.env.SUPABASE_URL ?? ''
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? process.env.BACKEND_URL ?? ''
 

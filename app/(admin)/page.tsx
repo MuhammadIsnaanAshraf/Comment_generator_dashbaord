@@ -1,10 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { useAdminResource } from '../hooks/useAdminResource'
-import { ResourceState } from '../components/ui/ResourceState'
-import { StatusStrip } from '../components/dashboard/StatusStrip'
-import { AlertList } from '../components/dashboard/AlertList'
+import { useAdminResource } from '../../hooks/useAdminResource'
+import { ResourceState } from '../../components/ui/ResourceState'
+import { StatusStrip } from '../../components/dashboard/StatusStrip'
+import { AlertList } from '../../components/dashboard/AlertList'
 import {
   Badge,
   EmptyState,
@@ -15,9 +15,9 @@ import {
   Td,
   Th,
   TableShell,
-} from '../components/ui/primitives'
-import { fmtAgo, fmtCount, fmtPercent, initials } from '../lib/format'
-import type { OverviewResponse } from '../types'
+} from '../../components/ui/primitives'
+import { fmtAgo, fmtCount, fmtPercent, initials } from '../../lib/format'
+import type { OverviewResponse } from '../../types'
 
 export default function DashboardPage() {
   const { data, status, error, notConfigured, reload } =

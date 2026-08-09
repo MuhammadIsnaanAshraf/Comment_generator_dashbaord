@@ -14,6 +14,7 @@ import {
   SquareTerminal,
 } from 'lucide-react'
 import { cn } from '../../lib/utils'
+import { SignOutButton } from './SignOutButton'
 
 export const NAV_ITEMS = [
   { href: '/', label: 'Dashboard', icon: LayoutGrid },
@@ -29,8 +30,15 @@ export const NAV_ITEMS = [
 
 export const SIDEBAR_WIDTH = 272
 
-export function Sidebar() {
+export interface AdminIdentity {
+  email: string | null
+  role: string
+}
+
+export function Sidebar({ user }: { user: AdminIdentity }) {
   const pathname = usePathname()
+  const handle = user.email?.split('@')[0] ?? 'admin'
+  const badge = (user.email?.slice(0, 2) ?? 'AD').toUpperCase()
 
   return (
     <aside
@@ -75,12 +83,17 @@ export function Sidebar() {
       {/* Operator */}
       <div className="flex items-center gap-3 border-t border-line px-5 py-4">
         <div className="grid size-9 shrink-0 place-items-center rounded-full bg-accent/15 font-mono text-xs font-semibold text-accent-soft">
-          AD
+          {badge}
         </div>
-        <div className="min-w-0">
-          <p className="truncate font-mono text-xs text-fg">Admin Avatar</p>
-          <p className="truncate font-mono text-2xs text-dim">Primary Admin</p>
+        <div className="min-w-0 flex-1">
+          <p className="truncate font-mono text-xs text-fg" title={user.email ?? undefined}>
+            {handle}
+          </p>
+          <p className="truncate font-mono text-2xs uppercase tracking-[0.06em] text-dim">
+            {user.role}
+          </p>
         </div>
+        <SignOutButton />
       </div>
     </aside>
   )

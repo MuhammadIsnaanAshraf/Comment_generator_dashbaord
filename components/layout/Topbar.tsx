@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Search, Radio, Cpu, Webhook } from 'lucide-react'
-import { SIDEBAR_WIDTH } from './Sidebar'
+import { SIDEBAR_WIDTH, type AdminIdentity } from './Sidebar'
 
 /** The design gives each section its own search affordance copy. */
 const SEARCH_PLACEHOLDER: Record<string, string> = {
@@ -18,7 +18,7 @@ const SEARCH_PLACEHOLDER: Record<string, string> = {
   '/logs': 'Search logs, users, or trace IDs…',
 }
 
-export function Topbar() {
+export function Topbar({ user }: { user: AdminIdentity }) {
   const pathname = usePathname()
   const placeholder = SEARCH_PLACEHOLDER[pathname] ?? 'Global system search…'
 
@@ -59,9 +59,10 @@ export function Topbar() {
           </Link>
           <Link
             href="/config"
+            title={user.email ?? undefined}
             className="ml-3 rounded-md bg-accent-soft px-4 py-2 font-mono text-xs font-semibold text-[hsl(250_30%_10%)] transition-opacity hover:opacity-90"
           >
-            Profile
+            {user.email?.split('@')[0] ?? 'Profile'}
           </Link>
         </div>
       </div>

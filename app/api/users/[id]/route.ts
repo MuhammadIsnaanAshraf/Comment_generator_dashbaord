@@ -13,6 +13,7 @@ import {
 import { getSupabaseAdmin } from '../../../../lib/supabase-admin'
 import { assertConfigured } from '../../../../lib/admin-data'
 import { errorResponse } from '../../../../lib/api-response'
+import { requireAdmin } from '../../../../lib/require-admin'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -20,6 +21,9 @@ export const dynamic = 'force-dynamic'
 const WINDOW_DAYS = 30
 
 export async function GET(_request: Request, { params }: { params: { id: string } }) {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
   try {
     assertConfigured()
     const supabase = getSupabaseAdmin()

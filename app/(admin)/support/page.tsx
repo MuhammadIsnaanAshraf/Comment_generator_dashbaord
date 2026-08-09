@@ -2,9 +2,9 @@
 
 import { useMemo } from 'react'
 import Link from 'next/link'
-import { useAdminResource } from '../../hooks/useAdminResource'
-import { ResourceState } from '../../components/ui/ResourceState'
-import { Header } from '../../components/layout/Header'
+import { useAdminResource } from '../../../hooks/useAdminResource'
+import { ResourceState } from '../../../components/ui/ResourceState'
+import { Header } from '../../../components/layout/Header'
 import {
   Badge,
   EmptyState,
@@ -15,9 +15,9 @@ import {
   Th,
   TableShell,
   type Tone,
-} from '../../components/ui/primitives'
-import { fmtAgo, fmtCount, initials } from '../../lib/format'
-import type { AdminUser } from '../../types'
+} from '../../../components/ui/primitives'
+import { fmtAgo, fmtCount, initials } from '../../../lib/format'
+import type { AdminUser } from '../../../types'
 
 interface UsersResponse {
   users: AdminUser[]

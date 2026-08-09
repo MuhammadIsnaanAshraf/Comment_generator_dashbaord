@@ -10,6 +10,7 @@ import {
 } from '../../../lib/admin-data'
 import { errorResponse } from '../../../lib/api-response'
 import type { GenerationFeedItem } from '../../../types'
+import { requireAdmin } from '../../../lib/require-admin'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -18,6 +19,9 @@ const DEFAULT_LIMIT = 100
 const DEFAULT_WINDOW_DAYS = 30
 
 export async function GET(request: NextRequest) {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
   try {
     const params = request.nextUrl.searchParams
     const limit = clampInt(params.get('limit'), DEFAULT_LIMIT, 1, WINDOW_ROW_CAP)

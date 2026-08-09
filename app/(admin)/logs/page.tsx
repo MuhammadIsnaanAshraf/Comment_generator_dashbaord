@@ -2,18 +2,18 @@
 
 import { useMemo, useState } from 'react'
 import { Download } from 'lucide-react'
-import { useAdminResource } from '../../hooks/useAdminResource'
-import { ResourceState } from '../../components/ui/ResourceState'
-import { Header } from '../../components/layout/Header'
+import { useAdminResource } from '../../../hooks/useAdminResource'
+import { ResourceState } from '../../../components/ui/ResourceState'
+import { Header } from '../../../components/layout/Header'
 import {
   Badge,
   EmptyState,
   GhostButton,
   Panel,
   type Tone,
-} from '../../components/ui/primitives'
-import { fmtDateTime, traceId, truncate } from '../../lib/format'
-import type { GenerationFeedItem } from '../../types'
+} from '../../../components/ui/primitives'
+import { fmtDateTime, traceId, truncate } from '../../../lib/format'
+import type { GenerationFeedItem } from '../../../types'
 
 interface FeedResponse {
   items: GenerationFeedItem[]

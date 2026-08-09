@@ -3,9 +3,9 @@
 import { Suspense, useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { SlidersHorizontal, SquareTerminal, X } from 'lucide-react'
-import { useAdminResource } from '../../hooks/useAdminResource'
-import { ResourceState } from '../../components/ui/ResourceState'
-import { Header } from '../../components/layout/Header'
+import { useAdminResource } from '../../../hooks/useAdminResource'
+import { ResourceState } from '../../../components/ui/ResourceState'
+import { Header } from '../../../components/layout/Header'
 import {
   Badge,
   EmptyState,
@@ -16,9 +16,9 @@ import {
   Th,
   TableShell,
   type Tone,
-} from '../../components/ui/primitives'
-import { fmtDateTime, fmtPercent, traceId, truncate } from '../../lib/format'
-import type { GenerationFeedItem } from '../../types'
+} from '../../../components/ui/primitives'
+import { fmtDateTime, fmtPercent, traceId, truncate } from '../../../lib/format'
+import type { GenerationFeedItem } from '../../../types'
 
 interface FeedResponse {
   items: GenerationFeedItem[]

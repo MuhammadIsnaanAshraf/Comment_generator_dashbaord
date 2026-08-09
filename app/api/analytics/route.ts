@@ -9,6 +9,7 @@ import {
 } from '../../../lib/admin-data'
 import { errorResponse } from '../../../lib/api-response'
 import type { AnalyticsResponse } from '../../../types'
+import { requireAdmin } from '../../../lib/require-admin'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -16,6 +17,9 @@ export const dynamic = 'force-dynamic'
 const DEFAULT_WINDOW_DAYS = 30
 
 export async function GET(request: NextRequest) {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
   try {
     const raw = Number.parseInt(request.nextUrl.searchParams.get('days') ?? '', 10)
     const days = Number.isFinite(raw) ? Math.min(90, Math.max(7, raw)) : DEFAULT_WINDOW_DAYS

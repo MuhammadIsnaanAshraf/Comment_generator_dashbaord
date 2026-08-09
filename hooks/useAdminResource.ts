@@ -1,6 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { LOGIN_PATH } from '../lib/auth-config'
 
 export interface AdminResource<T> {
   data: T | null
@@ -19,6 +21,7 @@ export interface AdminResource<T> {
  * setup hint (missing service-role key, etc.) reaches the operator verbatim.
  */
 export function useAdminResource<T>(url: string): AdminResource<T> {
+  const router = useRouter()
   const [data, setData] = useState<T | null>(null)
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
   const [error, setError] = useState('')
@@ -31,6 +34,15 @@ export function useAdminResource<T>(url: string): AdminResource<T> {
     setNotConfigured(false)
     try {
       const res = await fetch(url, { cache: 'no-store' })
+
+      // The session died while the console was open (token revoked, admin role
+      // removed). Bounce to login rather than showing a bare 401 in a panel.
+      if (res.status === 401 || res.status === 403) {
+        router.replace(`${LOGIN_PATH}?reason=${res.status === 403 ? 'forbidden' : 'expired'}`)
+        router.refresh()
+        return
+      }
+
       const body = await res.json()
       if (!res.ok) {
         setNotConfigured(res.status === 503)
@@ -43,7 +55,7 @@ export function useAdminResource<T>(url: string): AdminResource<T> {
       setError(err instanceof Error ? err.message : 'Request failed.')
       setStatus('error')
     }
-  }, [url])
+  }, [url, router])
 
   useEffect(() => {
     load()

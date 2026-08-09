@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { CreditCard, MoreVertical } from 'lucide-react'
-import { useAdminResource } from '../../hooks/useAdminResource'
-import { ResourceState } from '../../components/ui/ResourceState'
-import { Header } from '../../components/layout/Header'
-import { SERIES } from '../../components/charts/Charts'
+import { useAdminResource } from '../../../hooks/useAdminResource'
+import { ResourceState } from '../../../components/ui/ResourceState'
+import { Header } from '../../../components/layout/Header'
+import { SERIES } from '../../../components/charts/Charts'
 import {
   Badge,
   EmptyState,
@@ -17,8 +17,8 @@ import {
   Th,
   TableShell,
   type Tone,
-} from '../../components/ui/primitives'
-import { fmtDate, fmtDateTime, fmtPercent } from '../../lib/format'
+} from '../../../components/ui/primitives'
+import { fmtDate, fmtDateTime, fmtPercent } from '../../../lib/format'
 
 interface PlanConfig {
   id: string

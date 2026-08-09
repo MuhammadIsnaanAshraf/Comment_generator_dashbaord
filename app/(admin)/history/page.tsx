@@ -1,13 +1,13 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useCommentStore } from '../../store/useCommentStore'
-import { Header } from '../../components/layout/Header'
-import { Panel } from '../../components/ui/primitives'
-import { CommentTable } from '../../components/history/CommentTable'
-import { FilterBar } from '../../components/history/FilterBar'
-import { SearchBar } from '../../components/history/SearchBar'
-import { ExtensionSyncButton } from '../../components/layout/ExtensionSyncButton'
+import { useCommentStore } from '../../../store/useCommentStore'
+import { Header } from '../../../components/layout/Header'
+import { Panel } from '../../../components/ui/primitives'
+import { CommentTable } from '../../../components/history/CommentTable'
+import { FilterBar } from '../../../components/history/FilterBar'
+import { SearchBar } from '../../../components/history/SearchBar'
+import { ExtensionSyncButton } from '../../../components/layout/ExtensionSyncButton'
 
 /**
  * Extension-synced comment history. Unlike the rest of the console this reads

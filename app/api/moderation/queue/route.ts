@@ -12,6 +12,7 @@ import {
 } from '../../../../lib/admin-data'
 import { errorResponse } from '../../../../lib/api-response'
 import { bestRelevance } from '../../../../lib/relevance'
+import { requireAdmin } from '../../../../lib/require-admin'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -21,6 +22,9 @@ const WINDOW_DAYS = 90
 const LOW_RELEVANCE = 0.15
 
 export async function GET(request: NextRequest) {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
   try {
     const days = clampInt(request.nextUrl.searchParams.get('days'), WINDOW_DAYS, 1, 365)
 
@@ -99,6 +103,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const denied = await requireAdmin()
+  if (denied) return denied
+
   try {
     const body = await request.json()
     const ids: unknown = body?.ids
