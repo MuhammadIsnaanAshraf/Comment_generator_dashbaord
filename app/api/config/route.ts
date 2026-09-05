@@ -68,7 +68,7 @@ export async function GET() {
       },
       {
         key: 'MODEL',
-        value: 'llama-3.3-70b-versatile (Groq)',
+        value: 'llama-3.1-70b-versatile (Groq)',
         description: 'LLM used for comment generation.',
       },
       {
