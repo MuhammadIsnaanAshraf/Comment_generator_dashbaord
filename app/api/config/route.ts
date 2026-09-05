@@ -68,7 +68,7 @@ export async function GET() {
       },
       {
         key: 'MODEL',
-        value: 'llama-3.1-70b-versatile (Groq)',
+        value: 'openai/gpt-oss-120b (Groq)',
         description: 'LLM used for comment generation.',
       },
       {
